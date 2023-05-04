@@ -1,5 +1,6 @@
 ﻿using System.Linq.Expressions;
 using ChatApplication.Domain.Abstractions.Repositories;
+using Microsoft.EntityFrameworkCore;
 
 namespace ChatApplication.Infrastructure.Repositories
 {
@@ -11,14 +12,14 @@ namespace ChatApplication.Infrastructure.Repositories
         {
             _appDbContext = appDbContext;
         }
-        public T Get(string id)
+        public ValueTask<T?> Get(string id)
         {
-            return _appDbContext.Set<T>().Find(Guid.Parse(id));
+            return _appDbContext.Set<T>().FindAsync(Guid.Parse(id));
         }
 
-        public IEnumerable<T> GetAll()
+        public Task<List<T>> GetAll()
         {
-            return _appDbContext.Set<T>().ToList();
+            return _appDbContext.Set<T>().ToListAsync();
         }
 
         public IEnumerable<T> Find(Expression<Func<T, bool>> predicate)
@@ -26,11 +27,11 @@ namespace ChatApplication.Infrastructure.Repositories
             return _appDbContext.Set<T>().Where(predicate);
         }
 
-        public bool Add(T entity)
+        public async Task<bool> Add(T entity)
         {
             try
             {
-                _appDbContext.Set<T>().Add(entity);
+                await _appDbContext.Set<T>().AddAsync(entity);
                 return true;
             }
             catch (Exception ex)

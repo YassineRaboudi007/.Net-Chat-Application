@@ -1,6 +1,7 @@
 ﻿using ChatApplication.Application.Users.Commands.Login;
 using ChatApplication.Application.Users.Commands.Register;
 using ChatApplication.Application.Users.Queris.ConnectedUsers;
+using ChatApplication.Application.Users.Queris.GetConnectedUnknownUsers;
 using ChatApplication.Application.Users.Queris.UsersWithRooms;
 using ChatApplication.Domain.Abstractions.Auth;
 using ChatApplication.Domain.Entities;
@@ -41,9 +42,9 @@ namespace ChatApplication.Controllers
 
         [HttpPost]
         [Route("Login")]
-        public async Task<IActionResult> Login(LoginDto loginDto)
+        public async Task<IActionResult> Login(CreateMessageCommandDTO loginDto)
         {
-            LoginCommand loginCommand = new LoginCommand(loginDto.email, loginDto.password);
+            CreateMessageCommand loginCommand = new CreateMessageCommand(loginDto.email, loginDto.password);
             Result<string> result = await _mediator.Send(loginCommand);
             return result.isSuccess ? Ok(result.Value()) : _errorHandler.HandleFailure(result);
         }
@@ -61,7 +62,7 @@ namespace ChatApplication.Controllers
             {
                 string[] token = Request.Headers[key: "Authorization"].SingleOrDefault()!.Split(' ');
                 Guid id = _jwtProvider.GetIdFromToken(token[1]);
-                GetConnectedUsersQuery usersQuery = new GetConnectedUsersQuery(id);
+                GetAllConnectedUsersQuery usersQuery = new GetAllConnectedUsersQuery(id);
                 Result<IList<User>> result = await _mediator.Send(usersQuery);
                 return result.isSuccess ? Ok(result.Value()) : _errorHandler.HandleFailure(result);
             }
@@ -79,7 +80,7 @@ namespace ChatApplication.Controllers
             {
                 string[] token = Request.Headers[key: "Authorization"].SingleOrDefault()!.Split(' ');
                 Guid id = _jwtProvider.GetIdFromToken(token[1]);
-                GetConnectedUsersQuery usersQuery = new GetConnectedUsersQuery(id);
+                GetConnectedUnknownUsersQuery usersQuery = new GetConnectedUnknownUsersQuery(id);
                 Result<IList<User>> result = await _mediator.Send(usersQuery);
                 return result.isSuccess ? Ok(result.Value()) : _errorHandler.HandleFailure(result);
             }
@@ -87,7 +88,7 @@ namespace ChatApplication.Controllers
 
         [HttpGet]
         [Route("UsersWithRooms")]
-        public async Task<IActionResult> UsersWithRooms()
+        public async Task<IActionResult> KnownUsers()
         {
             if (Request.Headers[key: "Authorization"].SingleOrDefault() == null)
             {
@@ -98,7 +99,7 @@ namespace ChatApplication.Controllers
                 string[] token = Request.Headers[key: "Authorization"].SingleOrDefault()!.Split(' ');
                 Guid id = _jwtProvider.GetIdFromToken(token[1]);
                 GetUsersWithRoomsQuery usersQuery = new GetUsersWithRoomsQuery(id);
-                Result<IList<ICollection<Room>>> result = await _mediator.Send(usersQuery);
+                Result<IList<User>> result = await _mediator.Send(usersQuery);
                 return result.isSuccess ? Ok(result.Value()) : _errorHandler.HandleFailure(result);
 
             }

@@ -8,8 +8,8 @@ namespace ChatApplication.Domain.Entities
     public class Room
     {
         public Guid Id { get; set; }
-        public ICollection<User> Users{ get; set; }
-        public ICollection<Message> Messages{ get; set; }
+        public IList<User> Users{ get; set; }
+        public IList<Message> Messages{ get; set; }
 
         private Room()
         {
@@ -17,7 +17,7 @@ namespace ChatApplication.Domain.Entities
         }
 
         public static Room CreateRoom(
-            ICollection<User> users
+            IList<User> users
             )
         {
             Room room = new Room();

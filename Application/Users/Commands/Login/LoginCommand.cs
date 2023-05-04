@@ -3,5 +3,5 @@ using MediatR;
 
 namespace ChatApplication.Application.Users.Commands.Login
 {
-    public record LoginCommand(string email,string password) : IRequest<Result<string>>;
+    public record CreateMessageCommand(string email,string password) : IRequest<Result<string>>;
 }

@@ -2,9 +2,9 @@
 
 namespace ChatApplication.Application.Users.Commands.Login
 {
-    public class LoginCommandValidator : AbstractValidator<LoginCommand>
+    public class CreateMessageCommandValidtor : AbstractValidator<CreateMessageCommand>
     {
-        public LoginCommandValidator()
+        public CreateMessageCommandValidtor()
         {
             RuleFor(x => x.email).NotEmpty();
             RuleFor(x => x.email).EmailAddress();

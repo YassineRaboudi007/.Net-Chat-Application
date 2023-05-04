@@ -23,7 +23,7 @@ namespace ChatApplication.Application.Rooms.Commands.CreateRoom
 
         public async Task<Result<Room>> Handle(CreateRoomCommand request, CancellationToken cancellationToken)
         {
-            ICollection<User> users = _userRepository.GetUsersByIds(request.Users);
+            IList<User> users = await _userRepository.GetUsersByIds(request.Users);
             Room newRoom = Room.CreateRoom(users);
 
             using (_unitOfWork)

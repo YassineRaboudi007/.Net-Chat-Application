@@ -6,18 +6,18 @@ using MediatR;
 
 namespace ChatApplication.Application.Users.Commands.Login
 {
-    public class LoginCommandHandler : IRequestHandler<LoginCommand, Result<string>>
+    public class CreateMessageCommandhandler : IRequestHandler<CreateMessageCommand, Result<string>>
     {
         private readonly IUserRepository _userRepository;
         private readonly IJwtProvider _jwtProvider;
 
-        public LoginCommandHandler(IUserRepository userRepository, IJwtProvider jwtProvider)
+        public CreateMessageCommandhandler(IUserRepository userRepository, IJwtProvider jwtProvider)
         {
             _userRepository = userRepository;
             _jwtProvider = jwtProvider;
         }
 
-        public async Task<Result<string>> Handle(LoginCommand request, CancellationToken cancellationToken)
+        public async Task<Result<string>> Handle(CreateMessageCommand request, CancellationToken cancellationToken)
         {
             User user = await _userRepository.GetUserByEmail(request.email);
 

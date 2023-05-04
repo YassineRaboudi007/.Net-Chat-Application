@@ -17,7 +17,6 @@ namespace ChatApplication.Domain.Entities
         public User User { get; set; }
 
         public static Message Create(
-            string name, 
             string text, 
             Room room,
             User user

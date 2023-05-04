@@ -14,11 +14,11 @@ namespace ChatApplication.Infrastructure.Repositories
             _context = appDbContext;
         }
 
-        public IList<User> GetConnectedUsers(IList<Guid> ids, Guid userId)
+        public Task<List<User>> GetConnectedUsers(IList<Guid> ids, Guid userId)
         {
             IQueryable<User> allConnectedUsers = _context.Users.Where(user => ids.Contains(user.Id).Equals(true));
 
-            return allConnectedUsers.Where(user => user.Id != userId).ToList();    
+            return allConnectedUsers.Where(user => user.Id != userId).ToListAsync();    
         }
 
         public Task<User?> GetUserByEmail(string email)
@@ -26,32 +26,44 @@ namespace ChatApplication.Infrastructure.Repositories
             return _context.Users.FirstOrDefaultAsync(user => user.Email == email);
         }
 
-        public IList<User> GetUsersByIds(ICollection<Guid> ids)
+        public Task<List<User>> GetUsersByIds(ICollection<Guid> ids)
         {
-            return _context.Users.Where(user => ids.Contains(user.Id).Equals(true)).ToList();
+            return _context.Users.Where(user => ids.Contains(user.Id).Equals(true)).ToListAsync();
 
         }
 
-        public IList<ICollection<Room>> GetUsersWithRooms(Guid userId)
+        public Task<List<User>> GetUsersWithRooms(Guid userId)
         {
             var rooms = _context.Users
                 .Where(user => user.Id == userId)
                 .Include(user => user.Rooms)
-                .ThenInclude(room => room.Users.Where(user => user.Id != userId))
-                .Include(user => user.Rooms)
-                .ThenInclude(room => room.Messages)
-                .Select(user => user.Rooms);
-            return rooms.ToList();
+                .ThenInclude(room => room.Users.All(user => user.Id != userId));
+            return rooms.ToListAsync();
         }
 
-        public IList<User> GetConnectedUsersWithRooms(IList<Guid> ids, Guid userId)
+        public Task<List<User>> GetConnectedUsersWithRooms(IList<Guid> ids, Guid userId)
         {
             return _context.Users
                 .Where(user => user.Id == userId)
                 .Include(user => user.Rooms)
                 .ThenInclude(room => room.Users.Where(user => ids.Contains(user.Id).Equals(true)))
-                .ToList();
+                .ToListAsync();
         }
 
+        public Task<List<User>> GetConnectedUsersWithoutRoom(IList<Guid> ids, Guid userId)
+        {
+            User? currentUser = _context.Users.Where(user => user.Id == userId).FirstOrDefault();
+
+            if (currentUser == null)
+            {
+                return Task.FromResult(new List<User>());
+            }
+            
+            return _context.Users
+                .Where(user => ids.Contains(user.Id).Equals(true))
+                .Include(user => user.Rooms)
+                .Where(user => user.Rooms.All(room => room.Users.Contains(currentUser).Equals(true)))
+                .ToListAsync();
+        }
     }
 }

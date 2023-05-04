@@ -4,5 +4,5 @@ using MediatR;
 
 namespace ChatApplication.Application.Users.Queris.ConnectedUsers
 {
-    public record GetConnectedUsersQuery(Guid id) : IRequest<Result<IList<User>>>;
+    public record GetAllConnectedUsersQuery(Guid id) : IRequest<Result<IList<User>>>;
 }

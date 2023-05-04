@@ -4,10 +4,10 @@ namespace ChatApplication.Domain.Abstractions.Repositories
 {
     public interface IRepository<TEntity> where TEntity : class
     {
-        TEntity Get(string id);
-        IEnumerable<TEntity> GetAll();
+        ValueTask<TEntity?> Get(string id);
+        Task<List<TEntity>> GetAll();
         IEnumerable<TEntity> Find(Expression<Func<TEntity, bool>> predicate);
-        bool Add(TEntity entity);
+        Task<bool> Add(TEntity entity);
         bool Remove(TEntity entity);
 
     }

@@ -29,4 +29,8 @@
     <PackageReference Include="Swashbuckle.AspNetCore.Filters" Version="7.0.6" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Application\Messages\Queris\" />
+  </ItemGroup>
+
 </Project>
